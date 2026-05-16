@@ -290,6 +290,11 @@ const normalizeAchievements = (items = []) => {
     .filter((item) => item.title);
 };
 
+const STORAGE_BASE_URL = (
+  import.meta.env.VITE_STORAGE_BASE_URL ||
+  "https://buildportfolio.web.id/storage"
+).replace(/\/+$/, "");
+
 export const storageUrl = (path) => {
   if (!path) return null;
 
@@ -347,7 +352,7 @@ export const storageUrl = (path) => {
 
   if (!cleaned) return null;
 
-  return `/media/${cleaned}`;
+  return `${STORAGE_BASE_URL}/${cleaned}`;
 };
 
 export const buildPortfolioData = (order) => {
