@@ -1,0 +1,49 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Add Content-Type headers for WASM files to prevent "missing text/html" errors
+    AddType application/wasm .wasm
+    AddType application/octet-stream .wasm
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Serve static ACME challenge files
+    RewriteRule ^\.well-known/acme-challenge/.*$ - [L]
+
+    # 1. Route maintenance hosting diarahkan ke backend Laravel
+    RewriteRule ^_hosting(/.*)?$ backend/public/index.php [L]
+
+    # 2. API diarahkan ke backend Laravel (tetap seperti semula untuk login)
+    RewriteRule ^api(/.*)?$ backend/public/index.php [L]
+
+    # 3. Media public diarahkan ke Laravel untuk serve file storage tanpa konflik symlink
+    RewriteRule ^media/(.*)$ backend/public/index.php [L]
+
+    # 4. Storage diarahkan langsung ke storage/app/public jika file fisiknya ada
+    RewriteCond %{REQUEST_URI} !\.\.
+    RewriteCond %{DOCUMENT_ROOT}/backend/storage/app/public/$1 -f
+    RewriteRule ^storage/(.*)$ backend/storage/app/public/$1 [L]
+
+    # 5. Fallback ke Laravel untuk diagnosis/response file jika direct file tidak ketemu
+    RewriteRule ^storage/(.*)$ backend/public/index.php [L]
+
+    # 6. Jika file/folder benar-benar ada (seperti file CSS, JS, Gambar dari Vite), langsung tampilkan
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d [OR]
+    RewriteCond %{REQUEST_FILENAME} -l
+    RewriteRule ^ - [L]
+
+    # 7. Selain dari itu (misal halaman /login, /dashboard di React), arahkan ke frontend React (index.html)
+    RewriteRule ^ index.html [L]
+</IfModule>

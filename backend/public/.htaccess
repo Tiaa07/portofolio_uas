@@ -1,0 +1,43 @@
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "https://buildportfolio.web.id/"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Accept, Authorization, Content-Type, X-Requested-With, X-XSRF-TOKEN"
+    Header always set Access-Control-Allow-Credentials "true"
+
+    # Handle OPTIONS preflight immediately
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^ - [R=204,L]
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # 1. API diarahkan ke index.php (untuk proses login, dll)
+    RewriteRule ^api(/.*)?$ index.php [L]
+
+    # 2. Biarkan Apache menyajikan file di folder storage secara langsung
+    # Tidak perlu aturan khusus untuk storage agar file statis bisa terbaca.
+
+    # 2. Jika file/folder benar-benar ada (seperti file CSS, JS, Gambar dari Vite), langsung tampilkan
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # 3. Jika storage symlink gagal di hosting, teruskan /storage/... ke route Laravel fallback.
+    RewriteRule ^storage/(.*)$ index.php [L]
+
+    # 4. Selain dari itu (misal halaman /login, /dashboard di React), arahkan ke frontend React (index.html)
+    RewriteRule ^ index.html [L]
+</IfModule>
