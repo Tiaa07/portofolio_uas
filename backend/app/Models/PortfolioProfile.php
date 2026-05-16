@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class PortfolioProfile extends Model
 {
@@ -27,8 +28,21 @@ class PortfolioProfile extends Model
 
     public function getFotoProfilAttribute($value)
     {
-        if (!$value) return $value;
-        return preg_replace('/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/storage\//', '', $value);
+        if (!$value) return null;
+
+        // Jika sudah berupa full URL yang valid (bukan localhost)
+        if (preg_match('/^https?:\/\//', $value)) {
+            // Jika URL mengandung localhost → ganti dengan domain hosting
+            if (preg_match('/localhost|127\.0\.0\.1/', $value)) {
+                $path = preg_replace('/^https?:\/\/[^\/]+\/storage\//', '', $value);
+                return rtrim(config('app.url'), '/') . '/storage/' . $path;
+            }
+            return $value;
+        }
+
+        // Path relatif → buat full URL
+        $cleaned = ltrim($value, '/');
+        return rtrim(config('app.url'), '/') . '/storage/' . $cleaned;
     }
 
     public function order()

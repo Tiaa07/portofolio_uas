@@ -302,8 +302,19 @@ export const storageUrl = (path) => {
 
   if (!value) return null;
 
+  // Data URI atau Blob URL → kembalikan langsung
   if (value.startsWith("data:")) return value;
   if (value.startsWith("blob:")) return value;
+
+  // Vite-imported asset path (dev: /src/assets/, /@fs/, production: /assets/) → kembalikan langsung
+  if (
+    value.startsWith("/assets/") ||
+    value.startsWith("/src/assets/") ||
+    value.startsWith("/@fs/") ||
+    value.startsWith("/@vite/")
+  ) {
+    return value;
+  }
 
   let cleaned = value.replace(/\\/g, "/");
 
@@ -321,12 +332,21 @@ export const storageUrl = (path) => {
   if (cleaned.startsWith("http")) {
     try {
       const url = new URL(cleaned);
+
+      // URL dari domain lain (bukan localhost backend) → kembalikan langsung
+      const isLocalBackend =
+        url.hostname === "localhost" ||
+        url.hostname === "127.0.0.1" ||
+        url.port === "8000";
+
       const hasStoragePath = storageMarkers.some((marker) =>
         url.pathname.includes(marker),
       );
 
-      if (!hasStoragePath) return cleaned;
+      // URL eksternal tanpa path storage → kembalikan apa adanya
+      if (!hasStoragePath && !isLocalBackend) return cleaned;
 
+      // Ekstrak path dari URL (buang origin-nya)
       cleaned = url.pathname;
     } catch {
       return cleaned;

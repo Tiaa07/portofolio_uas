@@ -114,9 +114,9 @@ const Hero = ({ data }) => {
 
           <div className="relative ml-auto overflow-hidden rounded-[38px] border-[6px] border-[#d9f241] bg-[#f7f0df] shadow-[0_30px_70px_rgba(0,0,0,0.35)]">
             <div className="h-[460px] overflow-hidden">
-              {storageUrl(data.photo) ? (
+              {data.photo ? (
                 <img
-                  src={storageUrl(data.photo)}
+                  src={data.photo}
                   alt={data.name || "Foto Profil"}
                   className="h-full w-full object-cover"
                 />
@@ -300,9 +300,9 @@ const Projects = ({ data }) => {
             className="flex h-full min-h-[620px] flex-col overflow-hidden rounded-[34px] bg-[#3a20a6] text-white shadow-[0_20px_45px_rgba(0,0,0,0.18)]"
           >
             <div className="relative h-[250px] shrink-0 overflow-hidden bg-[#f6ecd7]">
-              {storageUrl(project.image) ? (
+              {project.image ? (
                 <img
-                  src={storageUrl(project.image)}
+                  src={project.image}
                   alt={project.title || "Project"}
                   className="h-full w-full object-cover object-top"
                 />

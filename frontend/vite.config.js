@@ -20,10 +20,12 @@ export default defineConfig({
       '/api': {
         target: 'https://buildportfolio.web.id/',
         changeOrigin: true,
+        secure: false,
       },
       '/storage': {
         target: 'https://buildportfolio.web.id/',
         changeOrigin: true,
+        secure: false,
       },
     },
   },

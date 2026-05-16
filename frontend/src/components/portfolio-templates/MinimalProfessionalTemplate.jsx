@@ -112,9 +112,9 @@ const Hero = ({ data }) => {
         <div className="absolute h-[210px] w-[210px] rounded-full border border-dashed border-black/20" />
 
         <div className="relative z-10 h-64 w-64 overflow-hidden rounded-full bg-black shadow-[0_28px_80px_rgba(0,0,0,0.25)]">
-          {storageUrl(data.photo) ? (
+          {data.photo ? (
             <img
-              src={storageUrl(data.photo)}
+              src={data.photo}
               alt={data.name || "Foto Profil"}
               className="h-full w-full object-cover"
             />
@@ -322,9 +322,9 @@ const Projects = ({ data }) => {
             className="flex h-full min-h-[640px] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.06] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-white/20"
           >
             <div className="h-[230px] shrink-0 overflow-hidden border-b border-white/10 bg-[#f8f6ef]">
-              {storageUrl(project.image) ? (
+              {project.image ? (
                 <img
-                  src={storageUrl(project.image)}
+                  src={project.image}
                   alt={project.title || "Project"}
                   className="h-full w-full object-cover object-top"
                 />

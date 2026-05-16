@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Template extends Model
 {
@@ -23,8 +24,15 @@ class Template extends Model
 
     public function getPreviewGambarAttribute($value)
     {
-        if (!$value) return $value;
-        return preg_replace('/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/storage\//', '', $value);
+        if (!$value) return null;
+
+        // Jika sudah berupa full URL (http/https), kembalikan apa adanya
+        if (preg_match('/^https?:\/\//', $value)) {
+            return $value;
+        }
+
+        // Path relatif → buat full URL via Storage
+        return Storage::url($value);
     }
 
     public function orders()

@@ -124,9 +124,9 @@ const Hero = ({ data }) => {
             </div>
 
             <div className="mx-auto h-56 w-56 overflow-hidden rounded-[44px] border-[8px] border-white/10 bg-[#fff1e8] shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-              {storageUrl(data.photo) ? (
+              {data.photo ? (
                 <img
-                  src={storageUrl(data.photo)}
+                  src={data.photo}
                   alt={data.name || "Foto Profil"}
                   className="h-full w-full object-cover"
                 />
@@ -198,9 +198,9 @@ const About = ({ data }) => {
         <div className="rounded-[34px] border border-white/10 bg-[linear-gradient(145deg,#131a33,#0d1226)] p-7">
           <div className="flex items-start gap-5">
             <div className="h-24 w-24 overflow-hidden rounded-[28px] border border-white/10 bg-white/10">
-              {storageUrl(data.photo) ? (
+              {data.photo ? (
                 <img
-                  src={storageUrl(data.photo)}
+                  src={data.photo}
                   alt={data.name || "Foto Profil"}
                   className="h-full w-full object-cover"
                 />
@@ -382,9 +382,9 @@ const Projects = ({ data }) => {
                 </span>
               </div>
 
-              {storageUrl(project.image) ? (
+              {project.image ? (
                 <img
-                  src={storageUrl(project.image)}
+                  src={project.image}
                   alt={project.title || "Project"}
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
