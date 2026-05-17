@@ -24,20 +24,18 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # 1. API diarahkan ke index.php (untuk proses login, dll)
+    # 1. API diarahkan ke index.php
     RewriteRule ^api(/.*)?$ index.php [L]
 
-    # 2. Biarkan Apache menyajikan file di folder storage secara langsung
-    # Tidak perlu aturan khusus untuk storage agar file statis bisa terbaca.
+    # 2. File /storage/* selalu dilayani oleh Laravel (karena Apache tidak bisa follow symlink)
+    #    Laravel akan cari file di storage/app/public/ dan serve via PHP
+    RewriteRule ^storage/(.*)$ index.php [L]
 
-    # 2. Jika file/folder benar-benar ada (seperti file CSS, JS, Gambar dari Vite), langsung tampilkan
+    # 3. Jika file/folder benar-benar ada (CSS, JS, Gambar dari Vite), langsung tampilkan
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # 3. Jika storage symlink gagal di hosting, teruskan /storage/... ke route Laravel fallback.
-    RewriteRule ^storage/(.*)$ index.php [L]
-
-    # 4. Selain dari itu (misal halaman /login, /dashboard di React), arahkan ke frontend React (index.html)
+    # 4. Selain dari itu (halaman React), arahkan ke frontend React (index.html)
     RewriteRule ^ index.html [L]
 </IfModule>
