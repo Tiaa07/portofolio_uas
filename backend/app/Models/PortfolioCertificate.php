@@ -27,13 +27,13 @@ class PortfolioCertificate extends Model
         if (preg_match('/^https?:\/\//', $value)) {
             if (preg_match('/localhost|127\.0\.0\.1/', $value)) {
                 $path = preg_replace('/^https?:\/\/[^\/]+\/storage\//', '', $value);
-                return rtrim(config('app.url'), '/') . '/storage/' . $path;
+                return rtrim(config('app.url'), '/') . '/media/' . $path;
             }
             return $value;
         }
 
         $cleaned = ltrim($value, '/');
-        return rtrim(config('app.url'), '/') . '/storage/' . $cleaned;
+        return rtrim(config('app.url'), '/') . '/media/' . $cleaned;
     }
 
     public function order()
